@@ -122,11 +122,10 @@ können `docker build` und der lokale Gradle-Build nicht auseinanderlaufen.
    **Private** wählen. (Alternativ: Repo als ZIP herunterladen und lokal `git init`.)
 2. Die Aufgabe lösen — in nachvollziehbaren Commits, wir schauen uns die Historie an.
 3. Wenn du fertig bist: **Settings ▸ Collaborators ▸ Add people** und
-   `<GITHUB-HANDLE-1>` sowie `<GITHUB-HANDLE-2>` als Collaborator einladen.
-4. Eine kurze Mail an **<KONTAKT-MAIL>** mit dem Link zum Repository.
+   `red-impag, rene.dietze@imp-ag.de` als Collaborator einladen.
+4. Eine kurze Mail an rene.dietze@imp-ag.de mit dem Link zum Repository.
 
-Bitte lade die Lösung **nicht** in ein öffentliches Repository und öffne keinen Pull Request auf
-dieses Template — das wäre für alle anderen Bewerber einsehbar.
+Bitte lade deine Lösung **nicht** in ein öffentliches Repository und öffne keinen Pull Request auf dieses Template, das wäre für alle anderen Bewerber einsehbar.
 
 ## Wenn etwas nicht läuft
 
