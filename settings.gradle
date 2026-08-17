@@ -1,0 +1,11 @@
+plugins {
+  // Lets Gradle download a JDK 21 by itself if none is installed, so the build does not depend on
+  // which JDK happens to sit in your PATH.
+  id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'booking-challenge'
+
+// Deliberately no dependencyResolutionManagement block here: the Node plugin registers its own
+// repository on the project, which in Gradle's default PREFER_PROJECT mode would silently discard
+// every repository declared in this file. Repositories live in build.gradle instead.

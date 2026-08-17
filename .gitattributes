@@ -1,0 +1,13 @@
+# Normalise line endings so the project behaves the same on macOS, Linux and Windows.
+* text=auto eol=lf
+
+# The Windows launcher must keep CRLF, otherwise cmd.exe can trip over it.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+gradlew text eol=lf
+
+*.jar binary
+*.png binary
+*.jpg binary
+*.ico binary

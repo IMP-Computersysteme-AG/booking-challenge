@@ -1,0 +1,106 @@
+plugins {
+  id 'java'
+  id 'org.springframework.boot' version '3.5.16'
+  id 'io.spring.dependency-management' version '1.1.7'
+  id 'com.github.node-gradle.node' version '7.1.0'
+}
+
+group = 'de.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+  runtimeOnly 'com.h2database:h2'
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+  useJUnitPlatform()
+}
+
+// Only the runnable jar, no additional "-plain" jar — one file, no guessing which one to start.
+tasks.named('jar') {
+  enabled = false
+}
+
+// --- Frontend build integration ---------------------------------------------------------------
+//
+// `./gradlew bootJar` produces the whole application: the SPA is built and packed into the jar as
+// static resources. The dev loop (`./gradlew bootRun` + `npm run dev`) never triggers a frontend
+// build, so backend restarts stay fast.
+//
+// Pass -PskipFrontend to leave npm out entirely, e.g. `./gradlew build -PskipFrontend`.
+
+def includeFrontend = !project.hasProperty('skipFrontend')
+
+node {
+  download = true
+  version = '22.17.0'
+  nodeProjectDir = file('frontend')
+  // Keep the downloaded toolchain inside build/ so `./gradlew clean` really cleans up.
+  workDir = layout.buildDirectory.dir('nodejs')
+  npmWorkDir = layout.buildDirectory.dir('npm')
+  // `npm ci` instead of `npm install`: installs exactly what package-lock.json pins.
+  npmInstallCommand = 'ci'
+}
+
+tasks.register('npmBuildFrontend', com.github.gradle.node.npm.task.NpmTask) {
+  group = 'frontend'
+  description = 'Builds the SPA into frontend/dist.'
+  dependsOn tasks.named('npmInstall')
+  args = ['run', 'build']
+  inputs.dir('frontend/src')
+  inputs.files(
+      'frontend/index.html',
+      'frontend/package.json',
+      'frontend/package-lock.json',
+      'frontend/vite.config.ts',
+      'frontend/tsconfig.json',
+      'frontend/tsconfig.app.json',
+      'frontend/tsconfig.node.json')
+  outputs.dir('frontend/dist')
+}
+
+tasks.register('npmTestFrontend', com.github.gradle.node.npm.task.NpmTask) {
+  group = 'verification'
+  description = 'Runs the frontend tests once (Vitest).'
+  dependsOn tasks.named('npmInstall')
+  args = ['run', 'test:ci']
+  outputs.upToDateWhen { false }
+}
+
+tasks.named('bootJar') {
+  archiveFileName = 'booking-challenge.jar'
+  if (includeFrontend) {
+    dependsOn 'npmBuildFrontend'
+  }
+  from('frontend/dist') {
+    into 'BOOT-INF/classes/static'
+  }
+}
+
+// Frontend tests run as part of `./gradlew build` — same gate as the backend tests.
+if (includeFrontend) {
+  tasks.named('check') {
+    dependsOn 'npmTestFrontend'
+  }
+}
+
+// frontend/dist lives outside build/, so clean has to be told about it.
+tasks.named('clean') {
+  delete 'frontend/dist'
+}

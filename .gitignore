@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# TypeScript incremental build info (written by `tsc -b`)
+*.tsbuildinfo
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

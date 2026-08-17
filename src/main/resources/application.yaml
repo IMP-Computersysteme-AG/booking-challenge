@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: booking-challenge
+
+  # In-memory database, so the whole application really is a single container with no
+  # external dependencies. Everything is gone on restart — making that persistent is one of
+  # the optional stretch goals in AUFGABE.md.
+  datasource:
+    url: jdbc:h2:mem:booking;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    # Hibernate must create the schema before data.sql runs.
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+
+  # http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:booking, user: sa, no password)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+server:
+  port: 8080
+
+logging:
+  level:
+    de.example.booking: DEBUG
